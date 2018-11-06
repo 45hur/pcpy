@@ -2,6 +2,8 @@
 
 void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *bytes)
 {
+	fprintf(stdout, "Packet received");
+
 	PcapManager *pm  = reinterpret_cast<PcapManager *>(args);
 	unsigned char * packet = pm->CreateIpv4UDPPacket(
 		pm->Mac(), pm->Mac(),
@@ -16,6 +18,10 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 	{
 		char *error = pcap_geterr(pm->Fp());
 		fprintf(stderr, "\nError sending the packet: %s\n", error);
+	}
+	else
+	{
+		fprintf(stdout, "Packet forwarded to %s %s", pm->Fp(), pm->Mac());
 	}
 
 	delete packet;
