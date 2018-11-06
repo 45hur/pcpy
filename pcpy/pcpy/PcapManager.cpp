@@ -11,7 +11,7 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 			pm->ipStrToInt(pm->Ip()), pm->ipStrToInt(pm->Ip()),
 			8080, 8080,
 			data,
-			h->caplen - 42 - 42
+			h->caplen
 		);
 
 		int size = h->caplen + 42;
