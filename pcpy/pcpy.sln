@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pcpy", "pcpy\pcpy.vcxproj", "{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}.Debug|ARM.ActiveCfg = Debug|ARM
+		{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}.Debug|ARM.Build.0 = Debug|ARM
+		{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}.Debug|x64.ActiveCfg = Debug|x64
+		{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}.Debug|x64.Build.0 = Debug|x64
+		{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}.Debug|x86.ActiveCfg = Debug|x86
+		{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}.Debug|x86.Build.0 = Debug|x86
+		{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}.Release|ARM.ActiveCfg = Release|ARM
+		{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}.Release|ARM.Build.0 = Release|ARM
+		{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}.Release|x64.ActiveCfg = Release|x64
+		{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}.Release|x64.Build.0 = Release|x64
+		{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}.Release|x86.ActiveCfg = Release|x86
+		{186FD17D-3976-4AE9-BCD1-8DB95CDC0368}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {091C963C-4C65-4370-A0B3-F5582FD03C0B}
+	EndGlobalSection
+EndGlobal
