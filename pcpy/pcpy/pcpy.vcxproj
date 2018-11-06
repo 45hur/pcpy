@@ -70,6 +70,11 @@
   <ItemGroup>
     <ClInclude Include="PcapManager.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="config.dat">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+  </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>
@@ -78,6 +83,17 @@
     <Link>
       <LibraryDependencies>pcap;%(LibraryDependencies)</LibraryDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+      <AdditionalSourcesToCopyMapping>
+      </AdditionalSourcesToCopyMapping>
+    </PostBuildEvent>
+    <RemotePostBuildEvent>
+      <AdditionalSourcesToCopyMapping>
+      </AdditionalSourcesToCopyMapping>
+      <Command>cp ~/projects/$(ProjectName)/config.dat  ~/projects/$(ProjectName)/bin/$(PlatformTarget)/$(Configuration)</Command>
+    </RemotePostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

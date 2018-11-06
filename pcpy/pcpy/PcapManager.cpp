@@ -17,7 +17,7 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 	if (pcap_sendpacket(pm->Fp(), packet, size) != 0)
 	{
 		char *error = pcap_geterr(pm->Fp());
-		fprintf(stderr, "\nError sending the packet: %s\n", error);
+		fprintf(stderr, "\nError sending the packet: %s, %d\n", error, size);
 	}
 	else
 	{
@@ -122,7 +122,7 @@ void PcapManager::DevicePrint()
 	pcap_freealldevs(alldevs);
 }
 
-bool PcapManager::DeviceOpen(int inum)
+bool PcapManager::DeviceOpen(char *ifname)
 {
 	if (fp != NULL)
 	{
@@ -136,39 +136,17 @@ bool PcapManager::DeviceOpen(int inum)
 	int i = 0;
 	char errbuf[PCAP_ERRBUF_SIZE];
 
-	if (pcap_findalldevs(&alldevs, errbuf) == -1)
-	{
-		fprintf(stderr, "Error in pcap_findalldevs: %s\n", errbuf);
-		return false;
-	}
-	int j = 0;
-	for (d = alldevs; d; d = d->next)
-	{
-		++j;
-	}
-
-	if (inum < 1 || inum > j)
-	{
-		fprintf(stdout, "\nInterface number out of range.\n");
-		pcap_freealldevs(alldevs);
-		return false;
-	}
-
-	for (d = alldevs, i = 0; i < inum - 1; d = d->next, i++);
 	if ((adhandle = pcap_open_live(
-		d->name,
+		ifname,
 		65536,            //portion of the packet to capture. 
 		1,			      //PCAP_OPENFLAG_PROMISCUOUS
 		1000,             // read timeout
 		errbuf            
 	)) == NULL)
 	{
-		fprintf(stderr, "\nUnable to open the adapter. %s is not supported by WinPcap\n", d->name);
-		pcap_freealldevs(alldevs);
+		fprintf(stderr, "\nUnable to open the adapter. %s is not supported by WinPcap\n", ifname);
 		return false;
 	}
-
-	pcap_freealldevs(alldevs);
 
 	fp = adhandle;
 
@@ -263,7 +241,7 @@ unsigned short PcapManager::calculateUDPChecksum(unsigned char* UserData,
 
 	PseudoHeader[0] = Protocol;											// Protocol
 	memcpy((void*)(PseudoHeader + 1), (void*)(FinalPacket + 26), 8);	// Source and Dest IP
-	Length = htons(Length);												// Length is not network byte order yet
+	//Length = htons(Length);												// Length is not network byte order yet
 	memcpy((void*)(PseudoHeader + 9), (void*)&Length, 2);				//Included twice
 	memcpy((void*)(PseudoHeader + 11), (void*)&Length, 2);
 	memcpy((void*)(PseudoHeader + 13), (void*)(FinalPacket + 34), 2);	//Source Port

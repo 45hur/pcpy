@@ -41,7 +41,7 @@ public:
 
 	void DevicePrint();
 	void DeviceClose();
-	bool DeviceOpen(int inum);
+	bool DeviceOpen(char * ifname);
 	void CopyTo(char * ip, char * mac);
 	unsigned long ipStrToInt(const char *ip);
 
