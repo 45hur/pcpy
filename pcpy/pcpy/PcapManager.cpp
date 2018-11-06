@@ -11,14 +11,13 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 			pm->ipStrToInt(pm->Ip()), pm->ipStrToInt(pm->Ip()),
 			8080, 8080,
 			data,
-			h->caplen
+			h->caplen - 42
 		);
 
-		int size = h->caplen + 42;
-		if (pcap_sendpacket(pm->Fp(), packet, size) != 0)
+		if (pcap_sendpacket(pm->Fp(), packet, h->caplen) != 0)
 		{
 			char *error = pcap_geterr(pm->Fp());
-			fprintf(stderr, "\nError sending the packet: %s, %d\n", error, size);
+			fprintf(stderr, "\nError sending the packet: %s, %d\n", error, h->caplen);
 		}
 		else
 		{
