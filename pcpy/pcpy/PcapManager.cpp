@@ -2,7 +2,7 @@
 
 void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *bytes)
 {
-	fprintf(stdout, "Packet received");
+	fprintf(stdout, "\nPacket received");
 
 	PcapManager *pm  = reinterpret_cast<PcapManager *>(args);
 	unsigned char * packet = pm->CreateIpv4UDPPacket(
@@ -51,7 +51,7 @@ unsigned long PcapManager::ipStrToInt(const char *ip)
 {
 	struct sockaddr_in sa;
 	inet_pton(AF_INET, ip, &(sa.sin_addr));
-	return /*swapBytes(*/ntohl(sa.sin_addr.s_addr)/*)*/;
+	return swapBytes(ntohl(sa.sin_addr.s_addr));
 }
 
 #define IPTOSBUFFERS    12
