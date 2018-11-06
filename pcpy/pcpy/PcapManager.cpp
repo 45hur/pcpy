@@ -208,6 +208,8 @@ bool PcapManager::SetFilter(char *packet_filter)
 		return false;
 	}
 
+	fprintf(stderr, "\nFilter %s applied.\n", packet_filter);
+
 	true;
 }
 
