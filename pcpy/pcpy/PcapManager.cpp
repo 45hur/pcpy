@@ -21,7 +21,7 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 	}
 	else
 	{
-		fprintf(stdout, "Packet forwarded to %s %s", pm->Fp(), pm->Mac());
+		fprintf(stdout, "\nPacket forwarded to %s %s, size %d", pm->Ip(), pm->Mac(), h->caplen);
 	}
 
 	delete packet;
