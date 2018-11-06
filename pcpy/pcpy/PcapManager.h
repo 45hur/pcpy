@@ -12,6 +12,7 @@ class PcapManager
 {
 protected:
 	pcap_t * fp;
+	u_int netmask = 0xffffff;
 	char *ip;
 	char *mac;
 
@@ -44,7 +45,7 @@ public:
 	bool DeviceOpen(char * ifname);
 	void CopyTo(char * ip, char * mac);
 	unsigned long ipStrToInt(const char *ip);
-
+	bool SetFilter(char *packet_filter);
 	unsigned char * CreateIpv4UDPPacket(
 		const	char*	SourceMAC,
 		const	char*	DestinationMAC,

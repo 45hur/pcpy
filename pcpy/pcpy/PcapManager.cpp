@@ -2,29 +2,31 @@
 
 void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *bytes)
 {
-	fprintf(stdout, "\nPacket received");
-
 	PcapManager *pm  = reinterpret_cast<PcapManager *>(args);
-	unsigned char * packet = pm->CreateIpv4UDPPacket(
-		pm->Mac(), pm->Mac(),
-		pm->ipStrToInt(pm->Ip()), pm->ipStrToInt(pm->Ip()),
-		8080, 8080,
-		(unsigned char *)bytes,
-		h->caplen
-	);
-
-	int size = h->caplen + 42;
-	if (pcap_sendpacket(pm->Fp(), packet, size) != 0)
+	unsigned char *data = ((unsigned char *)bytes) + 42;
+	if (h->caplen > 42)
 	{
-		char *error = pcap_geterr(pm->Fp());
-		fprintf(stderr, "\nError sending the packet: %s, %d\n", error, size);
-	}
-	else
-	{
-		fprintf(stdout, "\nPacket forwarded to %s %s, size %d", pm->Ip(), pm->Mac(), h->caplen);
-	}
+		unsigned char *packet = pm->CreateIpv4UDPPacket(
+			pm->Mac(), pm->Mac(),
+			pm->ipStrToInt(pm->Ip()), pm->ipStrToInt(pm->Ip()),
+			8080, 8080,
+			data,
+			h->caplen - 42
+		);
 
-	delete packet;
+		int size = h->caplen + 42;
+		if (pcap_sendpacket(pm->Fp(), packet, size) != 0)
+		{
+			char *error = pcap_geterr(pm->Fp());
+			fprintf(stderr, "\nError sending the packet: %s, %d\n", error, size);
+		}
+		else
+		{
+			fprintf(stdout, "\nPacket forwarded to %s %s, size %d", pm->Ip(), pm->Mac(), h->caplen);
+		}
+
+		delete packet;
+	}
 }
 
 PcapManager::PcapManager()
@@ -148,6 +150,30 @@ bool PcapManager::DeviceOpen(char *ifname)
 		return false;
 	}
 
+	if (pcap_findalldevs(&alldevs, errbuf) == -1)
+	{
+		fprintf(stderr, "Error in pcap_findalldevs: %s\n", errbuf);
+		return false;
+	}
+
+	if (alldevs == NULL)
+	{
+		return false;
+	}
+
+	for (d = alldevs; d != NULL; d = d->next)
+	{
+		if (strcmp(d->name, ifname) == 0)
+		{
+			if (d->addresses != NULL)
+				netmask = ((struct sockaddr_in *)d->addresses->addr)->sin_addr.s_addr;
+
+			break;
+		}
+	}
+
+	pcap_freealldevs(alldevs);
+
 	fp = adhandle;
 
 	return true;
@@ -165,6 +191,25 @@ void PcapManager::CopyTo(char * ip, char * mac)
 	strcpy(this->mac, mac);
 
 	pcap_loop(fp, 0, loop_callback, (u_char *)this);
+}
+
+bool PcapManager::SetFilter(char *packet_filter)
+{
+	struct bpf_program fcode;
+
+	if (pcap_compile(fp, &fcode, packet_filter, 1, netmask) <0)
+	{
+		fprintf(stderr, "\nUnable to compile the packet filter. Check the syntax.\n");
+		return false;
+	}
+
+	if (pcap_setfilter(fp, &fcode)<0)
+	{
+		fprintf(stderr, "\nError setting the filter.\n");
+		return false;
+	}
+
+	true;
 }
 
 unsigned char * PcapManager::CreateIpv4UDPPacket(

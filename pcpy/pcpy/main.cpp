@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 	char ip[80] = "127.0.0.1";
 	char mac[80] = "AA:BB:CC:DD:EE:FF"; 
 	char interface[80] = "eth0";
+	char filter[80] = "udp";
 	
 	if ((fp = fopen("config.dat", "r")) != NULL)
 	{
