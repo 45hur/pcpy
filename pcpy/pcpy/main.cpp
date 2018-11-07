@@ -46,18 +46,22 @@ int main(int argc, char *argv[])
 	if (env_interface) strcpy(interface, env_interface);
 	if (env_filter) strcpy(filter, env_filter);
 
-	fprintf(stdout, "\n%s", ip);
-	fprintf(stdout, "\n%s", mac);
-	fprintf(stdout, "\n%s", interface);
-	fprintf(stdout, "\n%s", filter);
+	fprintf(stderr, "\n%s", ip);
+	fprintf(stderr, "\n%s", mac);
+	fprintf(stderr, "\n%s", interface);
+	fprintf(stderr, "\n%s", filter);
 
 	if (pm->DeviceOpen(interface))
 	{
 		if (pm->SetFilter(filter))
 		{
-			fprintf(stdout, "\nFilter %s applied.\n", filter);
+			fprintf(stderr, "\nFilter %s applied.\n", filter);
 		}
 
 		pm->CopyTo(ip, mac);
+	}
+	else
+	{
+		fprintf(stderr, "\nfailed to open %s", interface);
 	}
 }
