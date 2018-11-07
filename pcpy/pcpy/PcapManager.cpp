@@ -208,9 +208,7 @@ bool PcapManager::SetFilter(char *packet_filter)
 		return false;
 	}
 
-	fprintf(stderr, "\nFilter %s applied.\n", packet_filter);
-
-	true;
+	return true;
 }
 
 unsigned char * PcapManager::CreateIpv4UDPPacket(
@@ -287,7 +285,7 @@ unsigned short PcapManager::calculateUDPChecksum(unsigned char* UserData,
 
 	PseudoHeader[0] = Protocol;											// Protocol
 	memcpy((void*)(PseudoHeader + 1), (void*)(FinalPacket + 26), 8);	// Source and Dest IP
-	//Length = htons(Length);												// Length is not network byte order yet
+	Length = htons(Length);												// Length is not network byte order yet
 	memcpy((void*)(PseudoHeader + 9), (void*)&Length, 2);				//Included twice
 	memcpy((void*)(PseudoHeader + 11), (void*)&Length, 2);
 	memcpy((void*)(PseudoHeader + 13), (void*)(FinalPacket + 34), 2);	//Source Port

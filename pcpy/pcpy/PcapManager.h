@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <pcap.h>
 #include <errno.h>
 #include <sys/socket.h>

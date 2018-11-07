@@ -13,7 +13,15 @@ int main(int argc, char *argv[])
 	char mac[80] = "AA:BB:CC:DD:EE:FF"; 
 	char interface[80] = "eth0";
 	char filter[80] = "udp";
-	
+
+	if (argc == 5)
+	{
+		strcpy(ip, argv[1]);
+		strcpy(mac, argv[2]);
+		strcpy(interface, argv[3]);
+		strcpy(filter, argv[4]);
+	}
+	else
 	if ((fp = fopen("config.dat", "r")) != NULL)
 	{
 		char buf[80] = {};
@@ -29,6 +37,15 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	char * env_ip = getenv("IP");
+	char * env_mac = getenv("MAC");
+	char * env_interface = getenv("INTERFACE");
+	char * env_filter = getenv("FILTER");
+	if (env_ip) strcpy(ip, env_ip);
+	if (env_mac) strcpy(mac, env_mac);
+	if (env_interface) strcpy(interface, env_interface);
+	if (env_filter) strcpy(filter, env_filter);
+
 	fprintf(stdout, "\n%s", ip);
 	fprintf(stdout, "\n%s", mac);
 	fprintf(stdout, "\n%s", interface);
@@ -38,7 +55,7 @@ int main(int argc, char *argv[])
 	{
 		if (pm->SetFilter(filter))
 		{
-			fprintf(stdout, "\nfilter set");
+			fprintf(stdout, "\nFilter %s applied.\n", filter);
 		}
 
 		pm->CopyTo(ip, mac);

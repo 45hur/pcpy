@@ -74,6 +74,7 @@
     <None Include="config.dat">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="Makefile" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
