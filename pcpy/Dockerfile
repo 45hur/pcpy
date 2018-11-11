@@ -1,29 +1,16 @@
-FROM debian:stable-slim
+FROM alpine:3.7
 
 WORKDIR /project
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update \
-  && apt-get dist-upgrade -y \
-  && echo "deb http://ftp.us.debian.org/debian jessie main contrib non-free" >> /etc/apt/sources.list.d/jessie.list \
-  && echo "deb http://ftp.us.debian.org/debian unstable main contrib non-free" >> /etc/apt/sources.list.d/unstable.list \
-  && apt-get update \
-  && apt-get install -y cmake \
-  && apt-get install -y g++-4.9 g++-5 g++-6 g++-7 g++-8 \
-  && apt-get install -y clang++-3.8 \
-  && apt-get install -y clang++-3.9 \
-  && apt-get install -y clang++-4.0 \
-  && apt-get install -y clang++-5.0 \
-  && apt-get install -y clang++-6.0 \
-  && apt-get autoremove --purge -y \
-  && apt-get autoclean -y \
-  && rm -rf /var/cache/apt/* /tmp/* \
-  && echo "Setting g++ 8 as default compiler" \
-  && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 1
+COPY . /project/pcpy
 
-RUN apt-get install -y libpcap-dev \
-  && apt-get install -y git \
-  && git clone https://github.com/Elctro/pcpy.git /project \
+RUN apk update \
+  && apk add make \
+  && apk add g++ \
+  && rm -rf /var/cache/apk/*
+
+RUN apk add libpcap-dev \
   && cd /project/pcpy/pcpy \
-  && make
+  && make main
 
-RUN /project/pcpy/pcpy/main
+CMD ["/project/pcpy/pcpy/main"]

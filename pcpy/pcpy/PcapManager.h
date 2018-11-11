@@ -12,10 +12,10 @@
 class PcapManager
 {
 protected:
-	pcap_t * fp;
+	pcap_t * fp = NULL;
 	u_int netmask = 0xffffff;
-	char *ip;
-	char *mac;
+	char *ip = NULL;
+	char *mac = NULL;
 
 	unsigned long swapBytes(unsigned long dword);
 	char * iptos(u_long in);
