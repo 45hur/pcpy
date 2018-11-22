@@ -1,7 +1,12 @@
+#include <time.h>
+
 #include "PcapManager.h"
 
 void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *bytes)
 {
+	time_t t;
+	srand((unsigned)time(&t));
+
 	PcapManager *pm  = reinterpret_cast<PcapManager *>(args);
 	unsigned char *data = ((unsigned char *)bytes) + 42;
 	if (h->caplen > 42)
