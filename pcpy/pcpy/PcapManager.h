@@ -21,6 +21,7 @@ protected:
 	u_int netmask = 0xffffff;
 	char *ip = NULL;
 	char *mac = NULL;
+	int port = 0;
 
 	unsigned long swapBytes(unsigned long dword);
 	char * iptos(u_long in);
@@ -44,13 +45,14 @@ public:
 
 	char *Ip() { return ip; }
 	char *Mac() { return mac; }
+	int Port() { return port; }
 	pcap_t *Fp() { return fp; }
 
 	void DevicePrint();
 	void DeviceClose();
 	bool DeviceOpen(char * ifname);
 	bool FileOpen(char * filename);
-	void CopyTo(char * ip, char * mac);
+	void CopyTo(char * ip, char * mac, int port);
 	unsigned long ipStrToInt(const char *ip);
 	bool SetFilter(char *packet_filter);
 	unsigned char * CreateIpv4UDPPacket(

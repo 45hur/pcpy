@@ -9,7 +9,7 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 		unsigned char *packet = pm->CreateIpv4UDPPacket(
 			pm->Mac(), pm->Mac(),
 			pm->ipStrToInt(pm->Ip()), pm->ipStrToInt(pm->Ip()),
-			8080, 8080,
+			pm->Port(), pm->Port(),
 			data,
 			h->caplen - 42
 		);
@@ -202,10 +202,11 @@ void PcapManager::DeviceClose()
 	fp = NULL;
 }
 
-void PcapManager::CopyTo(char * ip, char * mac)
+void PcapManager::CopyTo(char * ip, char * mac, int port)
 {
 	strcpy(this->ip, ip);
 	strcpy(this->mac, mac);
+	this->port = port;
 
 	if (dp != NULL)
 	{
