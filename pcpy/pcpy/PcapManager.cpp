@@ -71,7 +71,7 @@ char * PcapManager::iptos(u_long in)
 void PcapManager::ifPrint(pcap_if_t *d, int index)
 {
 	pcap_addr_t *a;
-	char ip6str[128];
+	//char ip6str[128];
 	fprintf(stdout, "%d.\t%s\n", index, d->name);
 	if (d->description)
 		fprintf(stdout, "\tDescription:\t%s\n", d->description);
@@ -127,14 +127,13 @@ bool PcapManager::DeviceOpen(char *ifname)
 {
 	if (fp != NULL)
 	{
-		fprintf(stderr, "Device is already opened.");
+		fprintf(stderr, "Device is already opened.\n");
 		return false;
 	}
 
 	pcap_t *adhandle = NULL;
 	pcap_if_t *d;
 	pcap_if_t *alldevs;
-	int i = 0;
 	char errbuf[PCAP_ERRBUF_SIZE];
 
 	if ((adhandle = pcap_open_live(
@@ -142,10 +141,10 @@ bool PcapManager::DeviceOpen(char *ifname)
 		65536,            //portion of the packet to capture. 
 		1,			      //PCAP_OPENFLAG_PROMISCUOUS
 		1000,             // read timeout
-		errbuf            
+		errbuf
 	)) == NULL)
 	{
-		fprintf(stderr, "\nUnable to open the adapter. %s is not supported by WinPcap\n", ifname);
+		fprintf(stderr, "Unable to open the adapter. %s is not supported by WinPcap\n", ifname);
 		return false;
 	}
 
@@ -178,6 +177,25 @@ bool PcapManager::DeviceOpen(char *ifname)
 	return true;
 }
 
+bool PcapManager::FileOpen(char * filename)
+{
+	if (dp != NULL)
+	{
+		fprintf(stderr, "File is already opened.\n");
+		return false;
+	}
+
+	char errbuf[PCAP_ERRBUF_SIZE];
+
+	/* Open the capture file */
+	if ((dp = pcap_open_offline(filename, errbuf)) == NULL)
+	{
+		fprintf(stderr, "\nUnable to open the file %s.\n", filename);
+		return false;
+	}
+	return true;
+}
+
 void PcapManager::DeviceClose()
 {
 	pcap_close(fp);
@@ -189,7 +207,14 @@ void PcapManager::CopyTo(char * ip, char * mac)
 	strcpy(this->ip, ip);
 	strcpy(this->mac, mac);
 
-	pcap_loop(fp, 0, loop_callback, (u_char *)this);
+	if (dp != NULL)
+	{
+		pcap_loop(dp, 0, loop_callback, (u_char *)this);
+	}
+	else
+	{
+		pcap_loop(fp, 0, loop_callback, (u_char *)this);
+	}
 }
 
 bool PcapManager::SetFilter(char *packet_filter)

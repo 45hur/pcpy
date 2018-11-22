@@ -9,10 +9,15 @@
 #include <arpa/inet.h>
 #include <string.h>
 
+#define PCAP_BUF_SIZE 1024
+#define PCAP_OPENFLAG_PROMISCUOUS 1
+#define PCAP_SRC_FILE 2
+
 class PcapManager
 {
 protected:
 	pcap_t * fp = NULL;
+	pcap_t * dp = NULL;
 	u_int netmask = 0xffffff;
 	char *ip = NULL;
 	char *mac = NULL;
@@ -44,6 +49,7 @@ public:
 	void DevicePrint();
 	void DeviceClose();
 	bool DeviceOpen(char * ifname);
+	bool FileOpen(char * filename);
 	void CopyTo(char * ip, char * mac);
 	unsigned long ipStrToInt(const char *ip);
 	bool SetFilter(char *packet_filter);
