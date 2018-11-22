@@ -7,9 +7,9 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 	if (h->caplen > 42)
 	{
 		unsigned char *packet = pm->CreateIpv4UDPPacket(
-			pm->Mac(), pm->Mac(),
-			pm->ipStrToInt(pm->Ip()), pm->ipStrToInt(pm->Ip()),
-			pm->Port(), pm->Port(),
+			pm->MacFrom(), pm->MacTo(),
+			pm->ipStrToInt(pm->IpFrom()), pm->ipStrToInt(pm->IpTo()),
+			pm->PortFrom(), pm->PortTo(),
 			data,
 			h->caplen - 42
 		);
@@ -21,7 +21,7 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 		}
 		else
 		{
-			fprintf(stdout, "\nPacket forwarded to %s %s, size %d", pm->Ip(), pm->Mac(), h->caplen);
+			fprintf(stdout, "\n%s:%d[%s]->%s:%d[%s], size %d", pm->IpFrom(), pm->PortFrom(), pm->MacFrom(), pm->IpTo(), pm->PortTo(), pm->MacTo(), h->caplen);
 		}
 
 		delete packet;
@@ -30,15 +30,19 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 
 PcapManager::PcapManager()
 {
-	ip = new char[80];
-	mac = new char[80];
+	ip_from = new char[80];
+	mac_from = new char[80];
+	ip_to = new char[80];
+	mac_to = new char[80];
 }
 
 
 PcapManager::~PcapManager()
 {
-	delete ip;
-	delete mac;
+	delete ip_from;
+	delete mac_from;
+	delete ip_to;
+	delete mac_to;
 }
 
 
@@ -202,11 +206,14 @@ void PcapManager::DeviceClose()
 	fp = NULL;
 }
 
-void PcapManager::CopyTo(char * ip, char * mac, int port)
+void PcapManager::CopyTo(char * ip_from, char * mac_from, int port_from, char * ip_to, char * mac_to, int port_to)
 {
-	strcpy(this->ip, ip);
-	strcpy(this->mac, mac);
-	this->port = port;
+	strcpy(this->ip_from, ip_from);
+	strcpy(this->mac_from, mac_from);
+	this->port_from = port_from;
+	strcpy(this->ip_to, ip_to);
+	strcpy(this->mac_to, ip_to);
+	this->port_to = port_to;
 
 	if (dp != NULL)
 	{
