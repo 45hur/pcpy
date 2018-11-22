@@ -6,9 +6,24 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 	unsigned char *data = ((unsigned char *)bytes) + 42;
 	if (h->caplen > 42)
 	{
+		long r1 = random();
+		long r2 = random();
+		long r3 = random();
+		long r4 = random();
+		long m1 = random();
+		long m2 = random();
+		long m3 = random();
+		long m4 = random();
+		long m5 = random();
+		long m6 = random();
+		char ip[20] = { 0 };
+		char mac[20] = { 0 };
+		sprintf(ip, "%d.%d.%d.%d", r1 % 255, r2 % 255, r3 % 255, r4 % 255);
+		sprintf(mac, "%x:%x:%x:%x:%x:%x", m1 % 255, m2 % 255, m3 % 255, m4 % 255, m5 % 255, m6 % 255);
+
 		unsigned char *packet = pm->CreateIpv4UDPPacket(
-			pm->MacFrom(), pm->MacTo(),
-			pm->ipStrToInt(pm->IpFrom()), pm->ipStrToInt(pm->IpTo()),
+			mac, pm->MacTo(),
+			pm->ipStrToInt(ip), pm->ipStrToInt(pm->IpTo()),
 			pm->PortFrom(), pm->PortTo(),
 			data,
 			h->caplen - 42
@@ -21,7 +36,7 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 		}
 		else
 		{
-			fprintf(stdout, "\n%ld.%ld\t%s:%d[%s]->%s:%d[%s]=%db", h->ts.tv_sec, h->ts.tv_usec, pm->IpFrom(), pm->PortFrom(), pm->MacFrom(), pm->IpTo(), pm->PortTo(), pm->MacTo(), h->caplen);
+			fprintf(stdout, "\n%ld.%ld\t%s:%d[%s]->%s:%d[%s]=%db", h->ts.tv_sec, h->ts.tv_usec, ip, pm->PortFrom(), mac, pm->IpTo(), pm->PortTo(), pm->MacTo(), h->caplen);
 		}
 
 		delete packet;
