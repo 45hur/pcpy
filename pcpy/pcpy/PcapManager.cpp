@@ -4,9 +4,6 @@
 
 void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *bytes)
 {
-	time_t t;
-	srand((unsigned)time(&t));
-
 	PcapManager *pm  = reinterpret_cast<PcapManager *>(args);
 	unsigned char *data = ((unsigned char *)bytes) + 42;
 	if (h->caplen > 42)
@@ -228,6 +225,9 @@ void PcapManager::DeviceClose()
 
 void PcapManager::CopyTo(char * ip_from, char * mac_from, int port_from, char * ip_to, char * mac_to, int port_to)
 {
+	time_t t;
+	srand((unsigned)time(&t));
+
 	strcpy(this->ip_from, ip_from);
 	strcpy(this->mac_from, mac_from);
 	this->port_from = port_from;
