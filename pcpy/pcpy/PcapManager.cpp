@@ -21,7 +21,7 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 		}
 		else
 		{
-			fprintf(stdout, "\n%s:%d[%s]->%s:%d[%s], size %d", pm->IpFrom(), pm->PortFrom(), pm->MacFrom(), pm->IpTo(), pm->PortTo(), pm->MacTo(), h->caplen);
+			fprintf(stdout, "\n%ld.%ld\t%s:%d[%s]->%s:%d[%s]=%db", h->ts.tv_sec, h->ts.tv_usec, pm->IpFrom(), pm->PortFrom(), pm->MacFrom(), pm->IpTo(), pm->PortTo(), pm->MacTo(), h->caplen);
 		}
 
 		delete packet;
