@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "\nFilter %s applied.\n", filter);
 		}
 
-		pm->CopyTo(ip, mac, );
+		pm->CopyTo(ip, mac, iport);
 	}
 	else
 	{
