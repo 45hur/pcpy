@@ -212,7 +212,7 @@ void PcapManager::CopyTo(char * ip_from, char * mac_from, int port_from, char * 
 	strcpy(this->mac_from, mac_from);
 	this->port_from = port_from;
 	strcpy(this->ip_to, ip_to);
-	strcpy(this->mac_to, ip_to);
+	strcpy(this->mac_to, mac_to);
 	this->port_to = port_to;
 
 	if (dp != NULL)
