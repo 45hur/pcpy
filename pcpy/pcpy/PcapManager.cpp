@@ -70,7 +70,7 @@ PcapManager::~PcapManager()
 	delete mac_from;
 	delete ip_to;
 	delete mac_to;
-	free serveraddr;
+	free(serveraddr);
 }
 
 
