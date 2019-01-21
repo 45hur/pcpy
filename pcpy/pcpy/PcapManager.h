@@ -16,6 +16,8 @@
 class PcapManager
 {
 protected:
+	int fd = 0;
+	sockaddr_in *serveraddr;
 	pcap_t * fp = NULL;
 	pcap_t * dp = NULL;
 	u_int netmask = 0xffffff;
@@ -53,10 +55,14 @@ public:
 	char *MacTo() { return mac_to; }
 	int PortTo() { return port_to; }
 	pcap_t *Fp() { return fp; }
+	int Fd() { return fd; }
+	sockaddr_in *Serveraddr() { return serveraddr; }
+
 
 	void DevicePrint();
 	void DeviceClose();
 	bool DeviceOpen(char * ifname);
+	bool OpenSocket(char * ip);
 	bool FileOpen(char * filename);
 	void CopyTo(char * ip_from, char * mac_from, int port_from, char * ip_to, char * mac_to, int port_to);
 	unsigned long ipStrToInt(const char *ip);

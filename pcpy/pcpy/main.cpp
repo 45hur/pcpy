@@ -18,8 +18,9 @@ int main(int argc, char *argv[])
 	char interface[80] = "eth0";
 	char filter[80] = "udp";
 	char replayfile[255] = "";
+	char socket[255] = "";
 
-	if (argc == 9)
+	if (argc == 10)
 	{
 		strcpy(ip_from, argv[1]);
 		strcpy(mac_from, argv[2]);
@@ -30,6 +31,7 @@ int main(int argc, char *argv[])
 		strcpy(interface, argv[4]);
 		strcpy(filter, argv[5]);
 		strcpy(replayfile, argv[6]);
+		strcpy(socket, argv[7]);
 	}
 	else if ((fp = fopen("config.dat", "r")) != NULL)
 	{
@@ -48,6 +50,7 @@ int main(int argc, char *argv[])
 			if (i == 7) strcpy(interface, buf);
 			if (i == 8) strcpy(filter, buf);
 			if (i == 9) strcpy(replayfile, buf);
+			if (i == 10) strcpy(socket, buf);
 		}
 	}
 
@@ -60,6 +63,7 @@ int main(int argc, char *argv[])
 	char * env_interface = getenv("INTERFACE");
 	char * env_filter = getenv("FILTER");
 	char * env_replay = getenv("REPLAY");
+	char * env_socket = getenv("SOCKET");
 	if (env_ip_from) strcpy(ip_from, env_ip_from);
 	if (env_mac_from) strcpy(mac_from, env_mac_from);
 	if (env_port_from) strcpy(port_from, env_port_from);
@@ -69,6 +73,7 @@ int main(int argc, char *argv[])
 	if (env_interface) strcpy(interface, env_interface);
 	if (env_filter) strcpy(filter, env_filter);
 	if (env_replay) strcpy(replayfile, env_replay);
+	if (env_socket) strcpy(socket, env_socket);
 
 	int iport_from = atoi(port_from);
 	int iport_to = atoi(port_to);
@@ -77,11 +82,23 @@ int main(int argc, char *argv[])
 	fprintf(stderr, "TO   IP:\t%s\tMAC:\t%s\tPORT:\t%s\n", ip_to, mac_to, port_to);
 	fprintf(stderr, "IFACE:\t%s\n", interface);
 	fprintf(stderr, "FILTER:\t%s\n", filter);
-	fprintf(stderr, "FILE:\t%s\n", replayfile);
+	fprintf(stderr, "REPLAY:\t%s\n", replayfile);
+	fprintf(stderr, "SOCKET:\t%s\n", socket);
 
 	if (strlen(replayfile) > 0)
 	{
-		pm->FileOpen(replayfile);
+		if (pm->FileOpen(replayfile))
+		{
+			fprintf(stderr, "replay file opened");
+		}
+	}
+
+	if (strlen(socket) > 0)
+	{
+		if (pm->OpenSocket(socket))
+		{
+			fprintf(stderr, "socket opened");
+		}
 	}
 
 	if (pm->DeviceOpen(interface))

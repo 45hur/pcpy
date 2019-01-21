@@ -45,12 +45,22 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 	}
 }
 
+void socket_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *bytes)
+{
+	PcapManager *pm = reinterpret_cast<PcapManager *>(args);
+	if (sendto(pm->Fd(), bytes, h->caplen, 0, (const sockaddr *)pm->Serveraddr(), sizeof(pm->Serveraddr())) == -1)
+	{
+		fprintf(stderr, "\nError sending the packet with size %d\n", h->caplen);
+	}
+}
+
 PcapManager::PcapManager()
 {
 	ip_from = new char[80];
 	mac_from = new char[80];
 	ip_to = new char[80];
 	mac_to = new char[80];
+	serveraddr = (sockaddr_in *)malloc(sizeof(sockaddr_in));
 }
 
 
@@ -60,6 +70,7 @@ PcapManager::~PcapManager()
 	delete mac_from;
 	delete ip_to;
 	delete mac_to;
+	free serveraddr;
 }
 
 
@@ -198,6 +209,32 @@ bool PcapManager::DeviceOpen(char *ifname)
 	return true;
 }
 
+bool PcapManager::OpenSocket(char * ip)
+{
+	if (fd != 0)
+	{
+		fprintf(stderr, "Socket already created.\n");
+		return false;
+	}
+
+	fd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (fd == -1)
+	{
+		fprintf(stderr, "Unable to create socket.\n");
+		return false;
+	}
+
+	serveraddr->sin_family = AF_INET;
+	serveraddr->sin_port = htons(53);
+	if (inet_aton(ip, &serveraddr->sin_addr) == 0)
+	{
+		fprintf(stderr, "Unable to parse ip address for socket.\n");
+		return false;
+	}
+
+	return true;
+}
+
 bool PcapManager::FileOpen(char * filename)
 {
 	if (dp != NULL)
@@ -235,7 +272,11 @@ void PcapManager::CopyTo(char * ip_from, char * mac_from, int port_from, char * 
 	strcpy(this->mac_to, mac_to);
 	this->port_to = port_to;
 
-	if (dp != NULL)
+	if (fd != 0)
+	{
+		pcap_loop(fp, 0, socket_callback, (u_char *)this);
+	}
+	else if (dp != NULL)
 	{
 		pcap_loop(dp, 0, loop_callback, (u_char *)this);
 	}
