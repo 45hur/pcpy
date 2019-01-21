@@ -50,12 +50,16 @@ void socket_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *by
 	PcapManager *pm = reinterpret_cast<PcapManager *>(args);
 	struct sockaddr_in serveraddr = {};
 	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_port = htons(53);
-	inet_aton("172.1.1.1", &serveraddr.sin_addr);
+	serveraddr.sin_port = htons(pm->PortTo());
+	inet_aton(pm->IpTo(), &serveraddr.sin_addr);
 
 	if (sendto(pm->Fd(), bytes, h->caplen, 0, (const sockaddr*)&serveraddr, sizeof(serveraddr)) == -1)
 	{
 		fprintf(stderr, "\nError sending the packet with size %d\n", h->caplen);
+	}
+	else
+	{
+		fprintf(stderr, "\npacket sent");
 	}
 }
 

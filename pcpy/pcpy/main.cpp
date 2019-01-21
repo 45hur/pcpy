@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 	fprintf(stderr, "IFACE:\t%s\n", interface);
 	fprintf(stderr, "FILTER:\t%s\n", filter);
 	fprintf(stderr, "REPLAY:\t%s\n", replayfile);
-	fprintf(stderr, "SOCKET:\t%s\n", socket);
+	fprintf(stderr, "SOCKET:\t%s\n", "true");
 
 	if (strlen(replayfile) > 0)
 	{
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 
 	if (strlen(socket) > 0)
 	{
-		if (pm->OpenSocket(socket))
+		if (pm->OpenSocket(ip_to))
 		{
 			fprintf(stderr, "socket opened");
 		}
