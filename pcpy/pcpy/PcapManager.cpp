@@ -59,7 +59,7 @@ void socket_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *by
 	}
 	else
 	{
-		fprintf(stderr, "\npacket sent");
+		//fprintf(stderr, "\npacket sent");
 	}
 }
 
