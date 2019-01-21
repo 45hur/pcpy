@@ -53,7 +53,7 @@ void socket_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *by
 	serveraddr.sin_port = htons(pm->PortTo());
 	inet_aton(pm->IpTo(), &serveraddr.sin_addr);
 
-	if (sendto(pm->Fd(), bytes, h->caplen, 0, (const sockaddr*)&serveraddr, sizeof(serveraddr)) == -1)
+	if (h->caplen > 42 && sendto(pm->Fd(), bytes + 42, h->caplen - 42, 0, (const sockaddr*)&serveraddr, sizeof(serveraddr)) == -1)
 	{
 		fprintf(stderr, "\nError sending the packet with size %d\n", h->caplen);
 	}
