@@ -2,6 +2,8 @@
 #include "log.h"
 
 #include <pthread.h>
+#include <sys/time.h>
+#include <time.h>
 
 void debugLog(const char *format, ...)
 {
@@ -24,12 +26,16 @@ void debugLog(const char *format, ...)
 	FILE *fh = 0;
 	char message[4096] = { 0 };
 	char timebuf[30] = { 0 };
-	time_t rawtime;
-	struct tm * timeinfo;
+	
+	struct timeval tv;
+	time_t curtime;
 
-	time(&rawtime);
-	timeinfo = localtime(&rawtime);
-	strftime(timebuf, 26, "%Y/%m/%d %H:%M:%S", timeinfo);
+	gettimeofday(&tv, NULL);
+	curtime = tv.tv_sec;
+
+	strftime(timebuf, 30, "%m-%d-%Y  %T.", localtime(&curtime));
+	printf("%s%ld", timebuf, tv.tv_usec);
+
 	sprintf(message, "{\"timestamp\":\"%s\",\"tid\":\"%xl\",\"msg\":\"%s\"}\n", timebuf, pthread_self(), text);
 
 	fprintf(stdout, "%s", message);
