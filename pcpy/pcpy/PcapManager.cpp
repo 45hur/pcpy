@@ -182,7 +182,7 @@ bool PcapManager::DeviceOpen(char *ifname)
 		ifname,
 		65536,            //portion of the packet to capture. 
 		1,			      //PCAP_OPENFLAG_PROMISCUOUS
-		1000,             // read timeout
+		10,			      // read timeout
 		errbuf
 	)) == NULL)
 	{
