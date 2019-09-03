@@ -1,6 +1,7 @@
 #include <time.h>
 
 #include "PcapManager.h"
+#include "log.h"
 
 void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *bytes)
 {
@@ -34,11 +35,11 @@ void loop_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *byte
 		if (pcap_sendpacket(pm->Fp(), packet, h->caplen) != 0)
 		{
 			char *error = pcap_geterr(pm->Fp());
-			fprintf(stderr, "\nError sending the packet: %s, %d\n", error, h->caplen);
+			debugLog("Error sending the packet: %s, %d", error, h->caplen);
 		}
 		else
 		{
-			fprintf(stdout, "\n%ld.%ld\t%s:%d[%s]->%s:%d[%s]=%db", h->ts.tv_sec, h->ts.tv_usec, ip, pm->PortFrom(), mac, pm->IpTo(), pm->PortTo(), pm->MacTo(), h->caplen);
+			debugLog("%ld.%ld\t%s:%d[%s]->%s:%d[%s]=%db", h->ts.tv_sec, h->ts.tv_usec, ip, pm->PortFrom(), mac, pm->IpTo(), pm->PortTo(), pm->MacTo(), h->caplen);
 		}
 
 		delete packet;
@@ -55,11 +56,11 @@ void socket_callback(u_char *args, const struct pcap_pkthdr *h, const u_char *by
 
 	if (h->caplen > 42 && sendto(pm->Fd(), bytes + 42, h->caplen - 42, 0, (const sockaddr*)&serveraddr, sizeof(serveraddr)) == -1)
 	{
-		fprintf(stderr, "\nError sending the packet with size %d\n", h->caplen);
+		debugLog("Error sending the packet with size %d\n", h->caplen);
 	}
 	else
 	{
-		//fprintf(stderr, "\npacket sent");
+		debugLog("%ld.%ld\t%d->%s:%d[%s]=%db", h->ts.tv_sec, h->ts.tv_usec, pm->PortFrom(), pm->IpTo(), pm->PortTo(), pm->MacTo(), h->caplen);
 	}
 }
 
@@ -146,7 +147,7 @@ void PcapManager::DevicePrint()
 
 	if (pcap_findalldevs(&alldevs, errbuf) == -1)
 	{
-		fprintf(stderr, "Error in pcap_findalldevs: %s\n", errbuf);
+		debugLog("Error in pcap_findalldevs: %s\n", errbuf);
 		return;
 	}
 
@@ -168,7 +169,7 @@ bool PcapManager::DeviceOpen(char *ifname)
 {
 	if (fp != NULL)
 	{
-		fprintf(stderr, "Device is already opened.\n");
+		debugLog("Device is already opened.\n");
 		return false;
 	}
 
@@ -185,13 +186,13 @@ bool PcapManager::DeviceOpen(char *ifname)
 		errbuf
 	)) == NULL)
 	{
-		fprintf(stderr, "Unable to open the adapter. %s is not supported by WinPcap\n", ifname);
+		debugLog("Unable to open the adapter. %s is not supported by WinPcap\n", ifname);
 		return false;
 	}
 
 	if (pcap_findalldevs(&alldevs, errbuf) == -1)
 	{
-		fprintf(stderr, "Error in pcap_findalldevs: %s\n", errbuf);
+		debugLog("Error in pcap_findalldevs: %s\n", errbuf);
 		return false;
 	}
 
@@ -222,14 +223,14 @@ bool PcapManager::OpenSocket(char * ip)
 {
 	if (fd != 0)
 	{
-		fprintf(stderr, "Socket already created.\n");
+		debugLog("Socket already created.\n");
 		return false;
 	}
 
 	fd = socket(AF_INET, SOCK_DGRAM, 0);
 	if (fd == -1)
 	{
-		fprintf(stderr, "Unable to create socket.\n");
+		debugLog("Unable to create socket.\n");
 		return false;
 	}
 
@@ -237,7 +238,7 @@ bool PcapManager::OpenSocket(char * ip)
 	serveraddr->sin_port = htons(53);
 	if (inet_aton(ip, &serveraddr->sin_addr) == 0)
 	{
-		fprintf(stderr, "Unable to parse ip address for socket.\n");
+		debugLog("Unable to parse ip address for socket.\n");
 		return false;
 	}
 
@@ -248,7 +249,7 @@ bool PcapManager::FileOpen(char * filename)
 {
 	if (dp != NULL)
 	{
-		fprintf(stderr, "File is already opened.\n");
+		debugLog("File is already opened.\n");
 		return false;
 	}
 
@@ -257,7 +258,7 @@ bool PcapManager::FileOpen(char * filename)
 	/* Open the capture file */
 	if ((dp = pcap_open_offline(filename, errbuf)) == NULL)
 	{
-		fprintf(stderr, "\nUnable to open the file %s.\n", filename);
+		debugLog("\nUnable to open the file %s.\n", filename);
 		return false;
 	}
 	return true;
@@ -301,13 +302,13 @@ bool PcapManager::SetFilter(char *packet_filter)
 
 	if (pcap_compile(fp, &fcode, packet_filter, 1, netmask) <0)
 	{
-		fprintf(stderr, "\nUnable to compile the packet filter. Check the syntax.\n");
+		debugLog("\nUnable to compile the packet filter. Check the syntax.\n");
 		return false;
 	}
 
 	if (pcap_setfilter(fp, &fcode)<0)
 	{
-		fprintf(stderr, "\nError setting the filter.\n");
+		debugLog("\nError setting the filter.\n");
 		return false;
 	}
 

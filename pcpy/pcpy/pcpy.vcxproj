@@ -64,10 +64,12 @@
     <IncludePath>C:\Git\pcpy\packages\libpcap\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="log.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PcapManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="log.h" />
     <ClInclude Include="PcapManager.h" />
   </ItemGroup>
   <ItemGroup>
